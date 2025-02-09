@@ -22,7 +22,21 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {/* header */}
+          <main>{children}</main>
+          {/* footer */}
+          <footer className="bg-muted/50 py-12">
+            <div className="container mx-auto text-center text-gray-200 px-4">
+              <p>© {new Date().getFullYear()} StudyBuddy. Built with ❤ by Susmita Dey.</p>
+            </div>
+          </footer>
+        </ThemeProvider>
       </body>
     </html>
   );
