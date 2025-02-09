@@ -9,6 +9,7 @@ StuddyBuddy is a personalized web application for all CS students to prepare for
 - Roadmap to prepare for the career or develop a new skill
 - Open Source Project
 - Project Ideas Based on the skill level and interest
+- Practice DS and Algo questions with the solution and explanation in a code editor
 
 ## Getting Started
 
