@@ -3,9 +3,9 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 const IndustryInsightsPage = async () => {
-  const { isNotOnboarded } = await getUserOnboardingStatus();
+  const { isOnboarded } = await getUserOnboardingStatus();
 
-  if (isNotOnboarded) {
+  if (!isOnboarded) {
     redirect("/onboarding");
   }
 
