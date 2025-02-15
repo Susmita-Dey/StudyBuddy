@@ -20,6 +20,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 const OnboardingForm = ({ industries }) => {
   const [selectedIndustry, setSelectedIndustry] = useState(null);
@@ -35,6 +38,10 @@ const OnboardingForm = ({ industries }) => {
     resolver: zodResolver(onboardingSchema),
   });
 
+  const onSubmit = async (values) => {};
+
+  const watchIndustry = watch("industry");
+
   return (
     <div className="flex justify-center items-center bg-background">
       <Card className="w-full max-w-lg mt-10 mx-2">
@@ -48,11 +55,19 @@ const OnboardingForm = ({ industries }) => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
-            <div>
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            <div className="space-y-2">
               <Label htmlFor="industry">Industry</Label>
-              <Select>
-                <SelectTrigger className="w-[180px]">
+              <Select
+                onValueChange={(value) => {
+                  setValue("industry", value);
+                  setSelectedIndustry(
+                    industries.find((ind) => ind.id === value)
+                  );
+                  setValue("subIndustry", "");
+                }}
+              >
+                <SelectTrigger id="industry">
                   <SelectValue placeholder="Select an industry" />
                 </SelectTrigger>
                 <SelectContent>
@@ -65,7 +80,93 @@ const OnboardingForm = ({ industries }) => {
                   })}
                 </SelectContent>
               </Select>
+              {errors.industry && (
+                <p className="text-sm text-red-500">
+                  {errors.industry.message}
+                </p>
+              )}
             </div>
+
+            {/* Sub Industries */}
+            {watchIndustry && (
+              <div className="space-y-2">
+                <Label htmlFor="subIndustry">Sub-Industry</Label>
+                <Select
+                  onValueChange={(value) => {
+                    setValue("subIndustry", value);
+                  }}
+                >
+                  <SelectTrigger id="subIndustry">
+                    <SelectValue placeholder="Select a sub-industry" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {selectedIndustry?.subIndustries.map((ind) => {
+                      return (
+                        <SelectItem value={ind} key={ind}>
+                          {ind}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+                {errors.subIndustry && (
+                  <p className="text-sm text-red-500">
+                    {errors.subIndustry.message}
+                  </p>
+                )}
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="experience">Years of Experience</Label>
+              <Input
+                id="experience"
+                type="number"
+                min="0"
+                max="50"
+                placeholder="Enter years of experience"
+                {...register("experience")}
+              />
+              {errors.experience && (
+                <p className="text-sm text-red-500">
+                  {errors.experience.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="skills">Skills</Label>
+              <Input
+                id="skills"
+                type="text"
+                placeholder="e.g. JavaScript, React, Node.js, Python"
+                {...register("skills")}
+              />
+              <p className="text-sm text-muted-foreground">
+                Separate multiple skills with commas
+              </p>
+              {errors.skills && (
+                <p className="text-sm text-red-500">{errors.skills.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="bio">Professional Bio</Label>
+              <Textarea
+                id="bio"
+                type="text"
+                placeholder="Tell us about your professional background..."
+                className="h-32"
+                {...register("bio")}
+              />
+              {errors.bio && (
+                <p className="text-sm text-red-500">{errors.bio.message}</p>
+              )}
+            </div>
+
+            <Button type="submit" className="w-full">
+              Complete Profile
+            </Button>
           </form>
         </CardContent>
       </Card>
