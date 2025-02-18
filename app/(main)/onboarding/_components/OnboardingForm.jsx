@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { onboardingSchema } from "@/lib/formSchema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,10 +23,20 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import useFetch from "@/hooks/useFetch";
+import { updateUser } from "@/actions/user";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const OnboardingForm = ({ industries }) => {
   const [selectedIndustry, setSelectedIndustry] = useState(null);
   const router = useRouter();
+
+  const {
+    loading: updateLoading,
+    fn: updateUserFn,
+    data: updateResult,
+  } = useFetch(updateUser);
 
   const {
     register,
@@ -38,7 +48,29 @@ const OnboardingForm = ({ industries }) => {
     resolver: zodResolver(onboardingSchema),
   });
 
-  const onSubmit = async (values) => {};
+  const onSubmit = async (values) => {
+    try {
+      console.log(values);
+      const formattedIndustry = `${values.industry}-${values.subIndustry
+        .toLowerCase()
+        .replace(/ /g, "-")}`;
+
+      await updateUserFn({
+        ...values,
+        industry: formattedIndustry,
+      });
+    } catch (error) {
+      console.error("Onboarding error", error);
+    }
+  };
+
+  useEffect(() => {
+    if (updateResult?.success && !updateLoading) {
+      toast.success("Profile updated successfully");
+      router.push("/dashboard");
+      router.refresh();
+    }
+  });
 
   const watchIndustry = watch("industry");
 
@@ -164,8 +196,14 @@ const OnboardingForm = ({ industries }) => {
               )}
             </div>
 
-            <Button type="submit" className="w-full">
-              Complete Profile
+            <Button type="submit" className="w-full" disabled={updateLoading}>
+              {updateLoading ? (
+                <>
+                  <Loader2 className="animate-spin mr-2 w-6 h-6" /> Saving...
+                </>
+              ) : (
+                "Complete Profile"
+              )}
             </Button>
           </form>
         </CardContent>

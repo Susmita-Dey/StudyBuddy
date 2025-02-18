@@ -1,9 +1,10 @@
-import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Header from "@/components/header";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,6 +27,7 @@ export default function RootLayout({ children }) {
             {/* header */}
             <Header />
             <main>{children}</main>
+            <Toaster />
             {/* footer */}
             <footer className="bg-muted/50 py-4 relative bottom-0 w-full">
               <div className="container mx-auto text-center text-gray-200 px-4">
